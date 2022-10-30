@@ -1,5 +1,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { BiSearchAlt } from 'react-icons/bi';
+
 import {
   SearchbarHeader,
   SearchForm,
@@ -7,6 +9,9 @@ import {
   SearchFormButtonLabel,
   SearchFormInput,
 } from './Searchbar.styled.js';
+
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class Searchbar extends Component {
   state = {
@@ -19,6 +24,10 @@ export class Searchbar extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    if (this.state.searchQuery.trim() === '') {
+      toast.error('Please enter a value to search!');
+      return;
+    }
     this.props.onSubmit(this.state.searchQuery);
     this.reset();
   };
@@ -33,7 +42,7 @@ export class Searchbar extends Component {
       <SearchbarHeader>
         <SearchForm onSubmit={this.handleSubmit}>
           <SearchFormBbutton type="submit">
-            {/* <span>Search</span> */}
+            <BiSearchAlt style={{ width: 25, height: 25 }} />
           </SearchFormBbutton>
 
           <SearchFormButtonLabel>

@@ -29,7 +29,9 @@ export const SearchForm = styled.form`
 `;
 
 export const SearchFormBbutton = styled.button`
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 48px;
   height: 48px;
   border: 0;

@@ -1,5 +1,6 @@
 import { Component } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { fetchImages } from 'services/api';
 
 import { Searchbar } from './Searchbar/Searchbar';
@@ -13,7 +14,6 @@ export class App extends Component {
     images: [],
     searchQuery: '',
     page: 1,
-    per_page: 12,
     error: null,
     isLoading: false,
     showModal: false,
@@ -46,16 +46,21 @@ export class App extends Component {
       }));
 
       if (totalHits === 0) {
-        const notifyError = () =>
-          toast.error(
-            'Sorry, there are no images matching your search query. Please try again.'
-          );
-        return notifyError();
+        toast.warn(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      }
+
+      if (hits.length > 1 && hits.length < 12) {
+        setTimeout(() => {
+          toast.info('These are all possible search results.', {
+            autoClose: 5000,
+          });
+        }, 1500);
       }
     } catch (error) {
       this.setState({ error });
-      const notifyError = () => toast.error('Oops... Something went wrong');
-      return notifyError();
+      toast.error('Oops... Something went wrong');
     } finally {
       this.setState({ isLoading: false });
     }
@@ -63,12 +68,6 @@ export class App extends Component {
 
   onFormSubmit = searchQuery => {
     this.setState({ searchQuery, images: [], page: 1 });
-
-    if (searchQuery === '') {
-      const notifyError = () =>
-        toast.error('Please enter what are you looking for ?');
-      return notifyError();
-    }
   };
 
   onLoadMore = () => {
@@ -99,7 +98,7 @@ export class App extends Component {
     return (
       <>
         <Searchbar onSubmit={this.onFormSubmit} />
-        <Toaster position="top-center" />
+        <ToastContainer autoClose={4000} />
 
         <ImageGallery images={images} onOpenModal={this.openModal} />
 
