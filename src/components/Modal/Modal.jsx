@@ -23,12 +23,12 @@ export class Modal extends Component {
   };
 
   render() {
-    const { onModalClick, largeImage, altTag } = this.props;
+    const { largeImage, alt } = this.props;
 
     return (
-      <Overlay onClick={() => onModalClick()}>
+      <Overlay onClick={this.onBackDropClick}>
         <ModalWindow>
-          <img src={largeImage} alt={altTag} />
+          <img src={largeImage} alt={alt} />
         </ModalWindow>
       </Overlay>
     );
@@ -36,7 +36,7 @@ export class Modal extends Component {
 }
 
 Modal.prototypes = {
-  altTag: PropTypes.string.isRequired,
-  largeImageURL: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
+  alt: PropTypes.string.isRequired,
+  largeImage: PropTypes.string.isRequired,
+  onModalClick: PropTypes.func.isRequired,
 };

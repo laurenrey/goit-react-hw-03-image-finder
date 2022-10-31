@@ -110,7 +110,7 @@ export class App extends Component {
           <Modal
             onModalClick={this.toggleModal}
             largeImage={largeImageURL}
-            altTag={tags}
+            alt={tags}
           />
         )}
       </>

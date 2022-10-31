@@ -18,7 +18,7 @@ export const ImageGalleryItem = ({ url, tag, openModal, largeImageURL }) => {
 
 ImageGalleryItem.prototypes = {
   url: PropTypes.string.isRequired,
-  tags: PropTypes.string.isRequired,
+  tag: PropTypes.string.isRequired,
   largeImageURL: PropTypes.string.isRequired,
   openModal: PropTypes.func.isRequired,
 };
