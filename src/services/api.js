@@ -12,3 +12,12 @@ export const fetchImages = async (searchQuery, page) => {
   const response = await axios.get(`?q=${searchQuery}&page=${page}`);
   return response.data;
 };
+
+export function needValues(data) {
+  return data.map(({ id, tags, largeImageURL, webformatURL }) => ({
+    id,
+    tags,
+    largeImageURL,
+    webformatURL,
+  }));
+}

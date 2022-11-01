@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { fetchImages } from 'services/api';
+import { fetchImages, needValues } from 'services/api';
 
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
@@ -24,10 +24,11 @@ export class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     const prevSearchQuery = prevState.searchQuery;
     const nextSearchQuery = this.state.searchQuery;
+    const prevPage = prevState.page;
+    const page = this.state.page;
 
-    if (prevSearchQuery !== nextSearchQuery) {
+    if (prevSearchQuery !== nextSearchQuery || prevPage !== page) {
       this.renderGallery();
-      this.setState({ isLoading: true });
     }
   }
 
@@ -36,27 +37,20 @@ export class App extends Component {
     this.setState({ isLoading: true });
 
     try {
-      const response = await fetchImages(searchQuery, page);
+      const { hits, totalHits, total } = await fetchImages(searchQuery, page);
 
-      const { hits, totalHits } = response;
+      const newImages = needValues(hits);
 
-      this.setState(prevState => ({
-        images: [...prevState.images, ...hits],
-        page: page + 1,
+      this.setState(({ images }) => ({
+        images: [...images, ...newImages],
+        totalHits,
+        totalImages: total,
       }));
 
       if (totalHits === 0) {
         toast.warn(
           'Sorry, there are no images matching your search query. Please try again.'
         );
-      }
-
-      if (hits.length > 1 && hits.length < 12) {
-        setTimeout(() => {
-          toast.info('These are all possible search results.', {
-            autoClose: 5000,
-          });
-        }, 1500);
       }
     } catch (error) {
       this.setState({ error });
@@ -71,11 +65,9 @@ export class App extends Component {
   };
 
   onLoadMore = () => {
-    const { searchQuery, page } = this.state;
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
-    this.renderGallery(searchQuery, page);
   };
 
   openModal = (largeImageURL, tags) => {
@@ -93,19 +85,21 @@ export class App extends Component {
   };
 
   render() {
-    const { images, isLoading, largeImageURL, tags, showModal } = this.state;
+    const { images, isLoading, largeImageURL, tags, showModal, totalImages } =
+      this.state;
+
+    const allImages = images.length === totalImages;
 
     return (
       <>
         <Searchbar onSubmit={this.onFormSubmit} />
         <ToastContainer autoClose={4000} />
-
         <ImageGallery images={images} onOpenModal={this.openModal} />
-
         {isLoading && <Loader />}
 
-        {images.length >= 12 && <Button onClick={this.onLoadMore} />}
-
+        {images.length !== 0 && !isLoading && !allImages && (
+          <Button onClick={this.onLoadMore} />
+        )}
         {showModal && (
           <Modal
             onModalClick={this.toggleModal}
