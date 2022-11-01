@@ -37,21 +37,19 @@ export class App extends Component {
     this.setState({ isLoading: true });
 
     try {
-      const { hits, totalHits, total } = await fetchImages(searchQuery, page);
-
-      const newImages = needValues(hits);
-
-      this.setState(({ images }) => ({
-        images: [...images, ...newImages],
-        totalHits,
-        totalImages: total,
-      }));
+      const { hits, totalHits } = await fetchImages(searchQuery, page);
 
       if (totalHits === 0) {
         toast.warn(
           'Sorry, there are no images matching your search query. Please try again.'
         );
       }
+      const newImages = needValues(hits);
+
+      this.setState(({ images }) => ({
+        images: [...images, ...newImages],
+        totalHits,
+      }));
     } catch (error) {
       this.setState({ error });
       toast.error('Oops... Something went wrong');
@@ -85,10 +83,10 @@ export class App extends Component {
   };
 
   render() {
-    const { images, isLoading, largeImageURL, tags, showModal, totalImages } =
+    const { images, isLoading, largeImageURL, tags, showModal, totalHits } =
       this.state;
 
-    const allImages = images.length === totalImages;
+    const allImages = images.length === totalHits;
 
     return (
       <>
